@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+
+{% block title %}MediScan - About Us{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)), 
+                    url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+        padding: 4rem 2rem;
+        margin: -2rem -2rem 4rem -2rem;
+    }
+
+    .about-hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .about-hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        opacity: 0.9;
+    }
+
+    .mission-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 3rem 2rem;
+        border-radius: 15px;
+        margin: 2rem 0;
+        text-align: center;
+    }
+
+    .mission-section h2 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .mission-section p {
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 4rem 0;
+    }
+
+    .value-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .value-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .value-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .value-card h3 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+
+    .value-card p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .team-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 3rem 2rem;
+        border-radius: 15px;
+        margin: 4rem 0;
+        text-align: center;
+    }
+
+    .team-section h2 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .team-member {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .team-member:hover {
+        transform: translateY(-5px);
+    }
+
+    /* ✅ Circle Image Style */
+    .member-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;  /* circle ke bahar ka cut karega */
+        margin: 0 auto 1rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        border: 4px solid #667eea;
+    }
+
+    .member-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* image ko resize karega circle ke andar fit karne ke liye */
+    }
+
+    .team-member h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .team-member p {
+        color: #667eea;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .team-member .bio {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .timeline {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 3rem 2rem;
+        border-radius: 15px;
+        margin: 4rem 0;
+    }
+
+    .timeline h2 {
+        color: #667eea;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .timeline-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .timeline-year {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        margin-right: 2rem;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .timeline-content h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-content p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .about-hero h1 {
+            font-size: 2rem;
+        }
+        
+        .timeline-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .timeline-year {
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-hero">
+    <h1>About MediScan</h1>
+    <p>Revolutionizing medical report analysis through cutting-edge AI technology and advanced OCR processing.</p>
+</div>
+
+<div class="container">
+    <div class="mission-section">
+        <h2>Our Mission</h2>
+        <p>At MediScan, we are committed to transforming healthcare delivery by providing healthcare professionals with instant, accurate, and comprehensive medical report analysis. Our AI-powered platform bridges the gap between complex medical data and actionable insights, enabling better patient care and improved clinical decision-making.</p>
+    </div>
+
+    <div class="values-grid">
+        <div class="value-card">
+            <div class="value-icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <h3>Accuracy</h3>
+            <p>We maintain the highest standards of accuracy in medical report analysis, ensuring healthcare professionals can trust our results for critical decision-making.</p>
+        </div>
+        
+        <div class="value-card">
+            <div class="value-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Security</h3>
+            <p>Patient data security is our top priority. We implement enterprise-grade security measures and maintain HIPAA compliance standards.</p>
+        </div>
+        
+        <div class="value-card">
+            <div class="value-icon">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <h3>Innovation</h3>
+            <p>We continuously innovate and improve our AI algorithms to provide the most advanced medical report analysis capabilities.</p>
+        </div>
+        
+        <div class="value-card">
+            <div class="value-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3>Collaboration</h3>
+            <p>We work closely with healthcare professionals to understand their needs and develop solutions that truly enhance patient care.</p>
+        </div>
+        
+        <div class="value-card">
+            <div class="value-icon">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h3>Patient-Centric</h3>
+            <p>Every feature we develop is designed with the ultimate goal of improving patient outcomes and healthcare delivery.</p>
+        </div>
+        
+        <div class="value-card">
+            <div class="value-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3>Efficiency</h3>
+            <p>We save healthcare professionals valuable time by providing instant analysis, allowing them to focus on what matters most - patient care.</p>
+        </div>
+    </div>
+
+    <div class="team-section">
+        <h2>Our Team</h2>
+        <div class="team-grid">
+            <!-- Team Member 1 -->
+            <div class="team-member">
+                <div class="member-avatar">
+                    <img src="{% static 'images/aakash.png' %}" alt="Aakash Kushwah">
+                </div>
+                <h3>Aakash Kushwah</h3>
+                <p>Full Stack Developer with AI/ML Expertise</p>
+                <div class="bio">
+                    Passionate developer skilled in Django, AI/ML, and modern web technologies, building solutions for healthcare innovation.
+                </div>
+            </div>
+            
+            <!-- Team Member 2 -->
+            <div class="team-member">
+                <div class="member-avatar">
+                    <img src="{% static 'images/aashu.jpg' %}" alt="Aashutosh Tiwari">
+                </div>
+                <h3>Aashutosh Tiwari</h3>
+                <p>Full Stack Developer with AI/ML Expertise</p>
+                <div class="bio">
+                    Enthusiastic problem solver with expertise in machine learning, data science, and full-stack web development.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

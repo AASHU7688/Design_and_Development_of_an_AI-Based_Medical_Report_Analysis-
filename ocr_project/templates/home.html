@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+
+{% block title %}MediScan - Home{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<style> 
+    .hero {
+        background: linear-gradient(135deg, rgba(114, 136, 223, 0.9), rgba(165, 114, 216, 0.9)), 
+                    {% comment %} url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); {% endcomment %}
+                    url("{% static 'images/hero.webp' %}");
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+        padding: 8rem 2rem;
+        margin: -2rem -2rem 4rem -2rem;
+        animation: fadeIn 1s ease-out;
+    }
+
+    .hero h1 {
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        animation: slideUp 1s ease-out 0.2s both;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 1.4rem;
+        margin-bottom: 3rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        opacity: 0.9;
+        line-height: 1.6;
+        animation: slideUp 1s ease-out 0.4s both;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: slideUp 1s ease-out 0.6s both;
+    }
+
+    .btn-large {
+        padding: 1.2rem 2.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-large::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-large:hover::before {
+        left: 100%;
+    }
+
+    .btn-large:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+        margin: 5rem 0;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease;
+        animation: fadeInUp 0.8s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card:nth-child(5) { animation-delay: 0.5s; }
+    .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .feature-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        font-size: 2.5rem;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .feature-card:hover .feature-icon::before {
+        left: 100%;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .feature-card h3 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .feature-card p {
+        color: #666;
+        line-height: 1.7;
+        font-size: 1.1rem;
+    }
+
+    .stats {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 4rem 2rem;
+        border-radius: 20px;
+        margin: 5rem 0;
+        text-align: center;
+        animation: fadeIn 1s ease-out;
+    }
+
+    .stats h2 {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 3rem;
+        font-weight: 600;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+
+    .stat-item {
+        animation: bounceIn 0.8s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .stat-item:nth-child(1) { animation-delay: 0.1s; }
+    .stat-item:nth-child(2) { animation-delay: 0.2s; }
+    .stat-item:nth-child(3) { animation-delay: 0.3s; }
+    .stat-item:nth-child(4) { animation-delay: 0.4s; }
+
+    .stat-item h3 {
+        font-size: 3rem;
+        color: #667eea;
+        margin-bottom: 0.8rem;
+        font-weight: 700;
+    }
+
+    .stat-item p {
+        color: #666;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 5rem 2rem;
+        border-radius: 20px;
+        text-align: center;
+        margin: 5rem 0;
+        animation: fadeIn 1s ease-out;
+    }
+
+    .cta-section h2 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+
+    .cta-section p {
+        font-size: 1.3rem;
+        margin-bottom: 3rem;
+        opacity: 0.9;
+        line-height: 1.6;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            padding: 6rem 1rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+        }
+        
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-large {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .features {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .stats h2 {
+            font-size: 2rem;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Revolutionary Medical Report Analysis</h1>
+    <p>Transform your medical reports into actionable insights with our advanced AI-powered OCR and analysis platform. Get instant, accurate medical report interpretations.</p>
+    <div class="hero-buttons">
+        <a href="{% url 'report_analysis' %}" class="btn btn-primary btn-large">
+            <i class="fas fa-upload"></i> Start Analysis
+        </a>
+        <a href="{% url 'about' %}" class="btn btn-outline btn-large">
+            <i class="fas fa-info-circle"></i> Learn More
+        </a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-file-medical"></i>
+            </div>
+            <h3>OCR Processing</h3>
+            <p>Extract text from medical reports, prescriptions, and lab results with high accuracy using advanced OCR technology.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3>AI Analysis</h3>
+            <p>Get intelligent analysis of medical reports using cutting-edge AI models trained on medical data and terminology.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Secure & Private</h3>
+            <p>Your medical data is protected with enterprise-grade security and privacy measures. HIPAA compliant processing.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h3>Instant Results</h3>
+            <p>Get comprehensive analysis results in seconds, not hours. Save time and improve patient care efficiency.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Detailed Reports</h3>
+            <p>Receive detailed reports with key findings, potential diagnoses, and recommended follow-up actions.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3>Mobile Friendly</h3>
+            <p>Access your medical report analysis anywhere, anytime with our responsive mobile-optimized platform.</p>
+        </div>
+    </div>
+
+    <!-- <div class="stats">
+        <h2>Trusted by Healthcare Professionals</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>10,000+</h3>
+                <p>Reports Analyzed</p>
+            </div>
+            <div class="stat-item">
+                <h3>99.5%</h3>
+                <p>Accuracy Rate</p>
+            </div>
+            <div class="stat-item">
+                <h3>500+</h3>
+                <p>Healthcare Partners</p>
+            </div>
+            <div class="stat-item">
+                <h3>24/7</h3>
+                <p>Support Available</p>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="cta-section">
+        <h2>Ready to Transform Your Medical Reports?</h2>
+        <p>Join thousands of healthcare professionals who trust MediScan for accurate and fast medical report analysis.</p>
+        <a href="{% url 'report_analysis' %}" class="btn btn-primary btn-large">
+            <i class="fas fa-rocket"></i> Get Started Today
+        </a>
+    </div>
+</div>
+{% endblock %}

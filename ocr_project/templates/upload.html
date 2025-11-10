@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+
+{% block title %}MediScan - Report Analysis{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analysis-hero {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)), 
+                    url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+        padding: 4rem 2rem;
+        margin: -2rem -2rem 4rem -2rem;
+    }
+
+    .analysis-hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .analysis-hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        opacity: 0.9;
+    }
+
+    .analysis-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-form {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .upload-form h2 {
+        color: #667eea;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .file-upload-area {
+        border: 3px dashed #667eea;
+        border-radius: 15px;
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        background: rgba(102, 126, 234, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+        border-color: #764ba2;
+        background: rgba(102, 126, 234, 0.1);
+    }
+
+    .file-upload-area.dragover {
+        border-color: #764ba2;
+        background: rgba(102, 126, 234, 0.15);
+        transform: scale(1.02);
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    .upload-text {
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .upload-hint {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .upload-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .upload-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .upload-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .result-section {
+        margin-top: 3rem;
+    }
+
+    .result-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        border-left: 5px solid #667eea;
+    }
+
+    .result-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .result-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .result-title {
+        color: #333;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .result-content {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+    }
+
+    .markdown-content p { margin: 0.6rem 0; }
+    .markdown-content ul { margin: 0.5rem 0 0.5rem 1.25rem; }
+    .markdown-content ol { margin: 0.5rem 0 0.5rem 1.25rem; }
+    .markdown-content code, .markdown-content pre {
+        background: #eef0ff;
+        padding: 0.2rem 0.4rem;
+        border-radius: 6px;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .supported-formats {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 15px;
+        margin: 3rem 0;
+        text-align: center;
+    }
+
+    .supported-formats h3 {
+        color: #667eea;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .formats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .format-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .format-icon {
+        color: #667eea;
+        font-size: 1.5rem;
+    }
+
+    .format-name {
+        color: #333;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .analysis-hero h1 {
+            font-size: 2rem;
+        }
+        
+        .analysis-container {
+            margin: 0 1rem;
+            padding: 2rem;
+        }
+        
+        .file-upload-area {
+            padding: 2rem 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analysis-hero">
+    <h1>Medical Report Analysis</h1>
+    <p>Upload your medical reports and get instant AI-powered analysis and insights.</p>
+</div>
+
+<div class="container">
+    <div class="analysis-container">
+        <div class="upload-form">
+            <h2>Upload Medical Report</h2>
+            <form method="post" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+                <div style="display:flex; gap:1rem; align-items:center; justify-content:center; margin-bottom:1rem;">
+                    <label for="analysisType" style="font-weight:600; color:#333;">Analyze as:</label>
+                    <select name="analysis_type" id="analysisType" style="padding:0.6rem 1rem; border-radius:10px; border:1px solid #e0e0e0;">
+                        <option value="text" selected>Text report (PDF/Image OCR)</option>
+                        <option value="xray">X-ray (YOLO model)</option>
+                    </select>
+                </div>
+                <div class="file-upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Drag & drop your file here or click to browse</div>
+                    <div class="upload-hint" id="fileHint">Supports PDF for text; PNG/JPG/JPEG/BMP/TIFF/GIF/WEBP for images</div>
+                    <input type="file" name="file" id="fileInput" class="file-input" accept=".pdf,.png,.jpg,.jpeg,.bmp,.tif,.tiff,.gif,.webp" required>
+                </div>
+                <button type="submit" class="upload-btn" id="submitBtn">
+                    <i class="fas fa-upload"></i> Extract & Analyze
+                </button>
+            </form>
+        </div>
+
+            {% if extracted_text or summary or error_message %}
+        <div class="result-section">
+            {% if error_message %}
+            <div class="result-card" style="border-left-color:#dc3545;">
+                <div class="result-header">
+                    <div class="result-icon" style="background:linear-gradient(135deg,#dc3545,#a71d2a);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="result-title">Validation</h3>
+                </div>
+                <div class="result-content" style="background:#fff5f5;">
+                    {{ error_message }}
+                </div>
+            </div>
+            {% endif %}
+            {% if extracted_text %}
+            <div class="result-card">
+                <div class="result-header">
+                    <div class="result-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3 class="result-title">Extracted Text</h3>
+                </div>
+                <div class="result-content">
+                    <pre style="white-space: pre-wrap; word-wrap: break-word; margin:0;">{{ extracted_text }}</pre>
+                </div>
+            </div>
+            {% endif %}
+            
+
+            {% if summary %}
+            <div class="result-card">
+                <div class="result-header">
+                    <div class="result-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="result-title">AI Medical Analysis</h3>
+                </div>
+                <div class="result-content">
+                    <div id="summary-md" class="markdown-content" data-markdown="true">{{ summary }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="supported-formats">
+        <h3>Supported File Formats</h3>
+        <div class="formats-grid">
+            <div class="format-item">
+                <div class="format-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="format-name">PDF Files</div>
+            </div>
+            <div class="format-item">
+                <div class="format-icon">
+                    <i class="fas fa-file-image"></i>
+                </div>
+                <div class="format-name">PNG Images</div>
+            </div>
+            <div class="format-item">
+                <div class="format-icon">
+                    <i class="fas fa-file-image"></i>
+                </div>
+                <div class="format-name">JPG Images</div>
+            </div>
+            <div class="format-item">
+                <div class="format-icon">
+                    <i class="fas fa-file-image"></i>
+                </div>
+                <div class="format-name">JPEG Images</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// File upload drag and drop functionality
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+const submitBtn = document.getElementById('submitBtn');
+const analysisType = document.getElementById('analysisType');
+const fileHint = document.getElementById('fileHint');
+
+uploadArea.addEventListener('click', () => {
+    fileInput.click();
+});
+
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+
+uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('dragover');
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        updateUploadArea(files[0]);
+    }
+});
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        updateUploadArea(e.target.files[0]);
+    }
+});
+
+function updateUploadArea(file) {
+    const uploadText = uploadArea.querySelector('.upload-text');
+    const uploadIcon = uploadArea.querySelector('.upload-icon i');
+    
+    uploadText.textContent = `Selected: ${file.name}`;
+    uploadIcon.className = 'fas fa-check-circle';
+    uploadArea.style.borderColor = '#28a745';
+    uploadArea.style.background = 'rgba(40, 167, 69, 0.1)';
+}
+
+// Update accept types and hint based on analysis type
+function configureAcceptByType() {
+    if (analysisType.value === 'text') {
+        fileInput.setAttribute('accept', '.pdf,.png,.jpg,.jpeg,.bmp,.tif,.tiff,.gif,.webp');
+        fileHint.textContent = 'Supports PDF for text; PNG/JPG/JPEG/BMP/TIFF/GIF/WEBP for images';
+    } else {
+        fileInput.setAttribute('accept', '.png,.jpg,.jpeg,.bmp,.tif,.tiff,.gif,.webp');
+        fileHint.textContent = 'X-ray: Upload image file (PNG/JPG/JPEG/BMP/TIFF/GIF/WEBP)';
+    }
+}
+analysisType.addEventListener('change', () => {
+    configureAcceptByType();
+    // reset selection visuals when switching mode
+    const uploadText = uploadArea.querySelector('.upload-text');
+    const uploadIcon = uploadArea.querySelector('.upload-icon i');
+    uploadText.textContent = 'Drag & drop your file here or click to browse';
+    uploadIcon.className = 'fas fa-cloud-upload-alt';
+    uploadArea.style.borderColor = '#667eea';
+    uploadArea.style.background = 'rgba(102, 126, 234, 0.05)';
+    fileInput.value = '';
+});
+configureAcceptByType();
+
+// Form submission loading state
+document.getElementById('uploadForm').addEventListener('submit', function() {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+});
+
+// Render markdown for AI summary safely (like chatbot)
+document.addEventListener('DOMContentLoaded', function(){
+    const mdNodes = document.querySelectorAll('[data-markdown="true"]');
+    mdNodes.forEach(node => {
+        const raw = node.textContent;
+        if (raw && window.DOMPurify && window.marked) {
+            node.innerHTML = DOMPurify.sanitize(marked.parse(raw));
+        }
+    });
+});
+</script>
+<!-- Safe Markdown rendering libs -->
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+{% endblock %}

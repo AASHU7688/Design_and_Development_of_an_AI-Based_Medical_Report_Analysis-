@@ -1,0 +1,84 @@
+Tech Stack and Project Overview
+
+1) Core Technologies
+- Backend: Django 3.2 (Python)
+- Templating: Django Templates (HTML, inline CSS, minimal JS)
+- AI/LLM: Google Generative AI (Gemini) via google-generativeai
+- OCR (Images): pytesseract + Tesseract-OCR (Windows path configured in views)
+- PDF Text Extraction: pdfplumber (text-layer extraction)
+- Imaging: Pillow (PIL) for image handling
+- Frontend Enhancements: Font Awesome, Google Fonts (Poppins), custom CSS animations
+- Storage: Django FileSystemStorage (temporary upload handling)
+- Database: SQLite (db.sqlite3)
+
+2) Structure
+- Django project: ocr_project/
+  - App: ocr_app/ with views, urls, templates, static assets
+  - Templates: base.html, home.html, about.html, contact.html, login.html, signup.html, upload.html, chatbot.html
+  - Static: images under static/images/
+  - Sessions used for auth (demo); no persistent chat models
+
+3) Runtime Integrations
+- Gemini configured in views.py with model `gemini-2.5-flash`
+- Tesseract binary path set for Windows in views.py
+- pdfplumber for PDFs; pytesseract for images
+
+4) Pages and Features
+- Auth (demo): login, signup, logout via Django sessions
+- Home: Landing page and CTAs
+- Report Analysis (upload.html):
+  - Upload PDF/PNG/JPG/JPEG
+  - PDF: extract with pdfplumber using tuned x/y tolerance and text-flow; Image: OCR via pytesseract
+  - Send extracted text to Gemini for medical summary
+  - Show Extracted Text (raw) and AI Medical Analysis (markdown-rendered)
+- Chatbot (chatbot.html):
+  - Text-only Q&A focused on medical reports/tests
+  - Session-based chat history, safe Markdown rendering
+- About/Contact: informational pages
+
+5) Frontend UX
+- Global navbar, animations, responsive layout in base.html
+- DOMPurify + marked used for safe Markdown (chatbot + report summary)
+- Password visibility toggles on login/signup
+- Drag-and-drop upload on report analysis
+
+6) Application Flow
+- Login/Signup:
+  1. User submits form; on success, session `is_authenticated` flag set
+  2. Protected pages guarded by custom @login_required decorator
+
+- Report Analysis (primary):
+  1. User uploads file; backend stores temporarily (FileSystemStorage)
+  2. If PDF: extract text via pdfplumber (with fallbacks on tolerances). If Image: OCR via pytesseract
+  3. Aggregated text sent to Gemini with a medical-analysis prompt
+  4. Response displayed with Markdown formatting; extracted raw text also shown
+  5. Temp file deleted after processing
+
+- Chatbot:
+  1. User posts a text question
+  2. Prompt constrains scope to medical reports/tests; includes safety guidance
+  3. Gemini generates reply
+  4. Session history updated and rendered on page load
+
+7) Security/Privacy
+- CSRF tokens in forms
+- API key currently in code (views.py) for demo; move to env vars for production
+- Uploaded files removed after processing
+- DOMPurify sanitizes model output before rendering
+
+8) Limitations & Next Steps
+- Add OCR fallback for scanned PDFs without text layer (e.g., pdf2image/PyMuPDF + Tesseract per page)
+- Migrate to Django auth with hashed passwords and user models
+- Persist chat history in DB (e.g., ChatMessage model)
+- Add structured logging, error pages, and i18n/l10n
+
+9) Setup Notes
+- Requirements: Django, Pillow, pdfplumber, pytesseract, google-generativeai
+- Windows: Install Tesseract and confirm tesseract_cmd path in views.py
+- Set Gemini API key via environment variable in production
+
+Overall
+This Django app extracts text from medical reports (PDF/images) and produces AI-assisted medical summaries using Gemini. A companion chatbot provides conversational interpretation of tests/parameters. The UI uses Django templates with safe Markdown rendering and modern styling.
+
+
+
